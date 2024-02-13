@@ -8,7 +8,8 @@ function App() {
   const [myProjects, setMyProjects] = useState({
     selectedProjectId: undefined,
     // undefined: we're neither adding a new project nor have a project selected. we're doing nothing
-    projects: []
+    projects: [],
+    tasks: [],
   });
 
   function selectProjectHandler(selectedProjectId) {
@@ -60,8 +61,37 @@ function App() {
     });
   }
 
+  function addTaskHandler(text) {
+    setMyProjects(prevState => {
+      const newTask = {
+        text,
+        projectId: prevState.selectedProjectId,
+        id: Math.random()
+      };
+      return {
+        ...prevState,
+        tasks: [newTask, ...prevState.tasks],
+      }
+    });
+  }
+
+  function deleteTaskHandler(taskId) {
+    setMyProjects(prevState => {
+      return {
+        ...prevState,
+        tasks: prevState.tasks.filter(task => task.id != taskId),
+      }
+    });
+  }
+
   const selectedProject = myProjects.projects.find(project => project.id === myProjects.selectedProjectId);
-  let content = <Project project={selectedProject} onDelete={deleteProjectHandler} />;
+  let content = <Project
+    project={selectedProject}
+    onDeleteProject={deleteProjectHandler}
+    onAddTask={addTaskHandler}
+    onDeleteTask={deleteTaskHandler}
+    tasks={myProjects.tasks}
+  />;
   if (myProjects.selectedProjectId === undefined) {
     content = <NoProjectSelected addProject={startAddProjectHandler} />;
   } else if (myProjects.selectedProjectId === null) {
