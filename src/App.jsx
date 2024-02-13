@@ -4,14 +4,14 @@ import NoProjectSelected from "./components/NoProjectSelected";
 import Sidebar from "./components/Sidebar";
 
 function App() {
-  const [projects, setProjects] = useState({
+  const [myProjects, setMyProjects] = useState({
     selectedProjectId: undefined,
     // undefined: we're neither adding a new project nor have a project selected. we're doing nothing
     projects: []
   });
 
   function startAddProjectHandler() {
-    setProjects(prevState => {
+    setMyProjects(prevState => {
       return {
         ...prevState,
         selectedProjectId: null,
@@ -21,26 +21,27 @@ function App() {
   }
 
   function finishAddProjectHandler(projectData) {
-    setProjects(prevState => {
+    setMyProjects(prevState => {
       const newProject = { ...projectData, id: Math.random() };
       return {
         ...prevState,
+        selectedProjectId: undefined,
         projects: [...prevState.projects, newProject],
       }
     });
   }
 
   let content;
-  if (projects.selectedProjectId === undefined) {
+  if (myProjects.selectedProjectId === undefined) {
     content = <NoProjectSelected addProject={startAddProjectHandler} />;
-  } else if (projects.selectedProjectId === null) {
+  } else if (myProjects.selectedProjectId === null) {
     content = <NewProject onAdd={finishAddProjectHandler} />;
   }
 
   return (
     <>
       <main className="h-screen my-8 flex gap-8">
-        <Sidebar addProject={startAddProjectHandler} />
+        <Sidebar addProject={startAddProjectHandler} projects={myProjects.projects} />
         {content}
       </main>
     </>
